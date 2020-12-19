@@ -6,7 +6,7 @@ variable "AWS_REGION" {}
 
 # variable for aws-template.tf
 
-variable "project_name" {
+variable "ProjectName" {
   default= "radive15"
 }
 
