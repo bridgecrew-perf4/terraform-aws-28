@@ -1,4 +1,4 @@
-# security group for public subnet
+### security group for public subnet ###
 
 resource "aws_security_group" "sg_public" {
     name                    = "${var.project_name} public access"
@@ -34,7 +34,17 @@ resource "aws_security_group" "sg_public" {
 
 }
 
-# security group for private subnet
+resource "aws_security_group_rule" "sg_public" {
+    type                    = "ingress"
+    from_port               = 0
+    to_port                 = 65535
+    protocol                = "tcp"
+    security_group_id       = aws_security_group.sg_public.id
+    source_security_group_id= aws_security_group.sg_private.id
+    description             = "allow access from private security group"
+}
+
+### security group for private subnet ###
 
 resource "aws_security_group" "sg_private" {
     name                    = "${var.project_name} private access"
@@ -55,5 +65,6 @@ resource "aws_security_group_rule" "sg_private" {
     protocol                = "tcp"
     security_group_id       = aws_security_group.sg_private.id
     source_security_group_id= aws_security_group.sg_public.id
+    description             = "allow access from public security group"
 
 }

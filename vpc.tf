@@ -1,4 +1,4 @@
-# Create the VPC
+### create the VPC ###
 
 resource "aws_vpc" "main" {
   enable_dns_hostnames      = true
@@ -7,14 +7,14 @@ resource "aws_vpc" "main" {
   tags                      = { Name = "${var.project_name} vpc" }
 }
 
-# VPC internet access for public subnets
+### internet access for public subnets ###
 
 resource "aws_internet_gateway" "igw" {
   vpc_id                    = aws_vpc.main.id
   tags                      = { Name = "${var.project_name} igw" }
 }
 
-# VPC internet access for private subnets
+### internet access for private subnets ###
 
 resource "aws_eip" "eip" {
   vpc                       = true
@@ -28,11 +28,11 @@ resource "aws_nat_gateway" "nat_gw" {
   tags                      = { Name = "${var.project_name} nat gw" }
 }
 
-## set up routing table for public subnets
+### set up routing table for public subnets ###
 
 
-resource "aws_route_table" "route_table_public" {
-  vpc_id                    = aws_vpc.main.id
+resource "aws_default_route_table" "route_table_public" {
+  default_route_table_id    = aws_vpc.main.default_route_table_id
   tags                      = { Name = "${var.project_name} public route table" }
 
   route {
@@ -42,24 +42,24 @@ resource "aws_route_table" "route_table_public" {
 }
 
 resource "aws_route_table_association" "route_table_association_public1" {
-  route_table_id            = aws_route_table.route_table_public.id
+  route_table_id            = aws_default_route_table.route_table_public.id
   subnet_id                 = aws_subnet.public_1.id
   
 }
 
 resource "aws_route_table_association" "route_table_association_public2" {
-  route_table_id            = aws_route_table.route_table_public.id
+  route_table_id            = aws_default_route_table.route_table_public.id
   subnet_id                 = aws_subnet.public_2.id
   
 }
 
 resource "aws_route_table_association" "route_table_association_public3" {
-  route_table_id            = aws_route_table.route_table_public.id
+  route_table_id            = aws_default_route_table.route_table_public.id
   subnet_id                 = aws_subnet.public_3.id
   
 }
 
-## set up routing table for private subnets
+## set up routing table for private subnets ###
 
 resource "aws_route_table" "route_table_private" {
   vpc_id                    = aws_vpc.main.id
@@ -88,46 +88,3 @@ resource "aws_route_table_association" "route_table_association_private3" {
   subnet_id                 = aws_subnet.private_3.id
   
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
